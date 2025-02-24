@@ -33,7 +33,7 @@ CONFIG_SCHEMA = cv.Schema({
     cv.Required("ads_sensor"): cv.use_id(sensor.Sensor),
     cv.Required("water_temperature"): cv.use_id(sensor.Sensor)
     
-}).extend(sensor.sensor_schema(EcSensor))
+}).extend(sensor.sensor_schema(pHSensor))
 
 async def to_code(config):
     ads_sensor = await cg.get_variable(config["ads_sensor"])
