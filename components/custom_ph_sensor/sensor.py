@@ -23,14 +23,15 @@ async def to_code(config):
     await sensor.register_sensor(var, config)
     
     # Add the calibration services
-    def calibrate_ph7_callback():
+    def calibrate_ph7_callback(args):
         var.calibrate_neutral()
-    cg.add(var.register_service("calibrate_ph7", cg.RawExpression("{}"), lambda args: var.calibrate_neutral()))
-
-    def calibrate_ph4_callback():
+        return None  # Explicit return
+    
+    cg.add(var.register_service("calibrate_ph7", {}, calibrate_ph7_callback))
+    
+    # Define callback for pH 4 calibration
+    def calibrate_ph4_callback(args):
         var.calibrate_acid()
-    cg.add(var.register_service("calibrate_ph4", cg.RawExpression("{}"), lambda args: var.calibrate_acid()))
-
-
-   
-
+        return None  # Explicit return
+    
+    cg.add(var.register_service("calibrate_ph4", {}, calibrate_ph4_callback))
