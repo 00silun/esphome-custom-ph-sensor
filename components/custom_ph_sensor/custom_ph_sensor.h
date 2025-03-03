@@ -8,6 +8,8 @@ namespace custom_ph_sensor {
 
 class PhSensor : public esphome::PollingComponent, public esphome::sensor::Sensor {
  public:
+  // Expose the register_service function from the Component base class.
+  using Component::register_service;
   // Constructor now accepts both the ADS sensor and water temperature sensor pointers.
   PhSensor(esphome::sensor::Sensor *ads_sensor, esphome::sensor::Sensor *water_temperature_sensor)
       : esphome::PollingComponent(1000),
