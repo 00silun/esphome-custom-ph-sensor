@@ -12,8 +12,10 @@ CONFIG_SCHEMA = cv.Schema({
     cv.GenerateID(): cv.declare_id(PhSensor),
     cv.Required("ads_sensor"): cv.use_id(sensor.Sensor),
     cv.Required("water_temperature"): cv.use_id(sensor.Sensor)
-    
 }).extend(sensor.sensor_schema(PhSensor))
+
+# Define a dummy service schema that we don't actually use.
+SERVICE_SCHEMA = cg.RawExpression("{\"dummy\": 0}")
 
 async def to_code(config):
     ads_sensor = await cg.get_variable(config["ads_sensor"])
@@ -22,16 +24,6 @@ async def to_code(config):
     await cg.register_component(var, config)
     await sensor.register_sensor(var, config)
     
-    # Add the calibration services
-    def calibrate_ph7_callback(args):
-        var.calibrate_neutral()
-        return None  # Explicit return
-    
-    cg.add(var.register_service("calibrate_ph7", {}, calibrate_ph7_callback))
-    
-    # Define callback for pH 4 calibration
-    def calibrate_ph4_callback(args):
-        var.calibrate_acid()
-        return None  # Explicit return
-    
-    cg.add(var.register_service("calibrate_ph4", {}, calibrate_ph4_callback))
+    # Register the calibration services using the dummy schema.
+    cg.add(var.register_service("calibrate_ph7", SERVICE_SCHEMA, lambda args: (var.calibrate_neutral(), None)[1]))
+    cg.add(var.register_service("calibrate_ph4", SERVICE_SCHEMA, lambda args: (var.calibrate_acid(), None)[1]))
