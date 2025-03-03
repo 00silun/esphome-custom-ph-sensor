@@ -20,7 +20,5 @@ async def to_code(config):
     var = cg.new_Pvariable(config[CONF_ID], ads_sensor, water_temperature)
     await cg.register_component(var, config)
     await sensor.register_sensor(var, config)
-    # Register calibration services to be callable via ESPHome service calls
-    cg.add(var.register_service("calibrate_neutral", []))
-    cg.add(var.register_service("calibrate_acid", []))
+
 
