@@ -5,7 +5,7 @@ from esphome.const import CONF_ID
 
 custom_ph_sensor_ns = cg.esphome_ns.namespace("custom_ph_sensor")
 
-# Declare the C++ class
+# Declare the C++ class without pulling in register_service
 PhSensor = custom_ph_sensor_ns.class_("PhSensor", cg.PollingComponent, sensor.Sensor)
 
 CONFIG_SCHEMA = cv.Schema({
@@ -21,5 +21,5 @@ async def to_code(config):
     await cg.register_component(var, config)
     await sensor.register_sensor(var, config)
     # Register calibration services to be callable via ESPHome service calls
-    cg.add(var.register_service("calibrate_neutral", []))
-    cg.add(var.register_service("calibrate_acid", []))
+    #cg.add(var.register_service("calibrate_neutral", []))
+    #cg.add(var.register_service("calibrate_acid", []))
