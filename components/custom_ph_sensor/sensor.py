@@ -3,10 +3,7 @@ import esphome.config_validation as cv
 from esphome.components import sensor
 from esphome.const import CONF_ID
 
-# Create a namespace matching your C++ namespace.
 custom_ph_sensor_ns = cg.esphome_ns.namespace("custom_ph_sensor")
-
-# Declare your C++ class.
 PhSensor = custom_ph_sensor_ns.class_("PhSensor", cg.PollingComponent, sensor.Sensor)
 
 CONFIG_SCHEMA = cv.Schema({
@@ -15,14 +12,13 @@ CONFIG_SCHEMA = cv.Schema({
   cv.Required("water_temperature"): cv.use_id(sensor.Sensor)
 }).extend(sensor.sensor_schema(PhSensor))
 
-# Provide a dummy (nonempty) service schema as a raw C++ expression.
+# Define a dummy service schema that isn’t empty.
 SERVICE_SCHEMA = cg.RawExpression("({\"dummy\": 0})")
 
-# Helper: Create a plain function (not a lambda) that calls the desired method.
-def make_calibrate_callback(instance, func):
+def make_calibrate_callback(instance_method):
     def callback(args):
-        func()
-        return None  # Must return something (here, None)
+        instance_method()
+        return None  # Service callbacks need to return a value.
     return callback
 
 async def to_code(config):
@@ -32,10 +28,8 @@ async def to_code(config):
     await cg.register_component(var, config)
     await sensor.register_sensor(var, config)
 
-    # Create callback functions using the helper.
-    calibrate_ph7_cb = make_calibrate_callback(var, var.calibrate_neutral)
-    calibrate_ph4_cb = make_calibrate_callback(var, var.calibrate_acid)
+    calibrate_ph7_cb = make_calibrate_callback(var.calibrate_neutral)
+    calibrate_ph4_cb = make_calibrate_callback(var.calibrate_acid)
 
-    # Register the services with the nonempty dummy schema and the plain callbacks.
     cg.add(var.register_service("calibrate_ph7", SERVICE_SCHEMA, calibrate_ph7_cb))
     cg.add(var.register_service("calibrate_ph4", SERVICE_SCHEMA, calibrate_ph4_cb))
