@@ -31,6 +31,8 @@ class PhSensor : public esphome::PollingComponent, public esphome::sensor::Senso
     if (acid_pref.load(&acid_voltage_)) {
       ESP_LOGD("pH Sensor", "Loaded acid calibration: %.2f", acid_voltage_);
     }
+    // Register the custom service that will trigger calibrate_neutral()
+    this->register_service("calibrate_neutral", &PhSensor::calibrate_neutral);
   }
 
   void update() override {
