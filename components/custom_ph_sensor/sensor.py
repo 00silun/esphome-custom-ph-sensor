@@ -25,8 +25,12 @@ async def to_code(config):
     # Add the calibration services
     def calibrate_ph7_callback():
         var.calibrate_neutral()
-    cg.add(var.register_service("calibrate_ph7", cg.RawExpression("{}"), calibrate_ph7_callback))
+    cg.add(var.register_service("calibrate_ph7", cg.RawExpression("{}"), lambda args: var.calibrate_neutral()))
 
     def calibrate_ph4_callback():
         var.calibrate_acid()
-    cg.add(var.register_service("calibrate_ph4", cg.RawExpression("{}"), calibrate_ph4_callback))
+    cg.add(var.register_service("calibrate_ph4", cg.RawExpression("{}"), lambda args: var.calibrate_acid()))
+
+
+   
+
