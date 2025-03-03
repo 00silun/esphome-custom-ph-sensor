@@ -23,5 +23,5 @@ async def to_code(config):
     await sensor.register_sensor(var, config)
     
     # Add the calibration services
-    cg.add(var.register_service("calibrate_ph7", cg.raw_expression("{}"), lambda: var.calibrate_neutral()))
-    cg.add(var.register_service("calibrate_ph4", cg.raw_expression("{}"), lambda: var.calibrate_acid()))
+    cg.add(var.register_service("calibrate_ph7", cg.RawExpression("{}"), lambda: var.calibrate_neutral()))
+    cg.add(var.register_service("calibrate_ph4", cg.RawExpression("{}"), lambda: var.calibrate_acid()))
