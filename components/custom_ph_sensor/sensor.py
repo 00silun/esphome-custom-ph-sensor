@@ -12,14 +12,8 @@ CONFIG_SCHEMA = cv.Schema({
   cv.Required("water_temperature"): cv.use_id(sensor.Sensor)
 }).extend(sensor.sensor_schema(PhSensor))
 
-# Define a dummy service schema that isn’t empty.
+# Provide a nonempty dummy service schema.
 SERVICE_SCHEMA = cg.RawExpression("({\"dummy\": 0})")
-
-def make_calibrate_callback(instance_method):
-    def callback(args):
-        instance_method()
-        return None  # Service callbacks need to return a value.
-    return callback
 
 async def to_code(config):
     ads_sensor = await cg.get_variable(config["ads_sensor"])
@@ -28,8 +22,9 @@ async def to_code(config):
     await cg.register_component(var, config)
     await sensor.register_sensor(var, config)
 
-    calibrate_ph7_cb = make_calibrate_callback(var.calibrate_neutral)
-    calibrate_ph4_cb = make_calibrate_callback(var.calibrate_acid)
-
-    cg.add(var.register_service("calibrate_ph7", SERVICE_SCHEMA, calibrate_ph7_cb))
-    cg.add(var.register_service("calibrate_ph4", SERVICE_SCHEMA, calibrate_ph4_cb))
+    # Use raw C++ lambdas as service callbacks.
+    callback_ph7 = cg.RawExpression("[](const auto &args) { self->calibrate_neutral(); }")
+    callback_ph4 = cg.RawExpression("[](const auto &args) { self->calibrate_acid(); }")
+    
+    cg.add(var.register_service("calibrate_ph7", SERVICE_SCHEMA, callback_ph7))
+    cg.add(var.register_service("calibrate_ph4", SERVICE_SCHEMA, callback_ph4))
