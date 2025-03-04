@@ -90,7 +90,8 @@ class PhSensor : public esphome::PollingComponent, public esphome::sensor::Senso
     }
 
     float voltage = ads_sensor_->state * 1000.0;  // Convert to millivolts
-    if (voltage > 1854.0 && voltage < 2210.0) {
+    //if (voltage > 1854.0 && voltage < 2210.0) {
+    if (voltage > 0.0 && voltage < 3000.0) { // Allow any voltage for now
       acid_voltage_ = voltage;
       esphome::ESPPreferenceObject acid_pref = esphome::global_preferences->make_preference<float>(4);
       acid_pref.save(&acid_voltage_);
