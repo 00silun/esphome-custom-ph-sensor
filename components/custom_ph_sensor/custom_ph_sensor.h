@@ -72,7 +72,7 @@ class PhSensor : public esphome::PollingComponent, public esphome::sensor::Senso
     }
 
     float voltage = ads_sensor_->state * 1000.0;  // Convert to millivolts
-    if (voltage > 1322.0 && voltage < 1678.0) {
+    if (voltage > 1322.0 && voltage < 2000.0) {
       neutral_voltage_ = voltage;
       esphome::ESPPreferenceObject neutral_pref = esphome::global_preferences->make_preference<float>(0);
       neutral_pref.save(&neutral_voltage_);
