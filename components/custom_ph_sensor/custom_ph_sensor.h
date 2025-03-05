@@ -8,17 +8,14 @@ namespace custom_ph_sensor {
 
 class PhSensor : public esphome::PollingComponent, public esphome::sensor::Sensor {
  public:
-  // Constructor now accepts both the ADS sensor and water temperature sensor pointers.
+  // Constructor with ADS and water temperature sensor pointers.
   PhSensor(esphome::sensor::Sensor *ads_sensor, esphome::sensor::Sensor *water_temperature_sensor)
       : esphome::PollingComponent(1000),
         ads_sensor_(ads_sensor),
         water_temperature_sensor_(water_temperature_sensor) {
-    ESP_LOGD("pH Sensor", "PhSensor constructor called");
   }
 
   void setup() override {
-    ESP_LOGD("pH Sensor", "PhSensor setup() called");
-    // Set default calibration values.
     neutral_voltage_ = 1500.0;  // Default neutral voltage (in mV)
     acid_voltage_ = 2032.44;    // Default acid voltage (in mV)
 
@@ -34,8 +31,6 @@ class PhSensor : public esphome::PollingComponent, public esphome::sensor::Senso
   }
 
   void update() override {
-    ESP_LOGD("pH Sensor", "PhSensor update() called");
-    
     if (!ads_sensor_->has_state()) {
       ESP_LOGW("pH Sensor", "ADS1115 has no valid reading yet, publishing default value 7.0");
       publish_state(7.0);
