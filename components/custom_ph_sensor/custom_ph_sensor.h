@@ -44,7 +44,6 @@ class PhSensor : public esphome::PollingComponent, public esphome::sensor::Senso
   void update() override {
     if (!ads_sensor_->has_state()) {
       ESP_LOGW("pH Sensor", "ADS1115 has no valid reading yet, publishing default value 7.0");
-      publish_state(7.0);
       return;
     }
 
